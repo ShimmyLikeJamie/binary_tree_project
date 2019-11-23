@@ -93,6 +93,19 @@ class Tree
   end
 
   def level_order
+    queue = [@root]
+    values = []
+    until queue.empty?
+      queue.push(queue[0].left) unless queue[0].left.nil?
+      queue.push(queue[0].right) unless queue[0].right.nil?
+      if block_given?
+        yield(queue[0].value)
+      else
+        values.push(queue[0].value)
+      end
+      queue.shift
+    end
+    values
   end
 
   def find value
@@ -197,5 +210,4 @@ end
 
 example_array = [3, 5, 4, 70, 100, 2, 0, 1]
 example_tree = Tree.new(example_array)
-binding.pry
-puts "#{example_tree.find(5)}"
+puts "#{example_tree.level_order}"
