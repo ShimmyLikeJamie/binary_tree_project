@@ -115,13 +115,13 @@ class Tree
   end
   def preorder node=@root, values=[]
     values.push(node.value)
-    values = inorder(node.left, values) unless node.left.nil?
-    values = inorder(node.right, values) unless node.right.nil?
+    values = preorder(node.left, values) unless node.left.nil?
+    values = preorder(node.right, values) unless node.right.nil?
     values
   end
   def postorder node=@root, values=[]
-    values = inorder(node.left, values) unless node.left.nil?
-    values = inorder(node.right, values) unless node.right.nil?
+    values = postorder(node.left, values) unless node.left.nil?
+    values = postorder(node.right, values) unless node.right.nil?
     values.push(node.value)
     values
   end
