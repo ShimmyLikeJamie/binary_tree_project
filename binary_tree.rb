@@ -100,11 +100,29 @@ class Tree
       queue.push(queue[0].right) unless queue[0].right.nil?
       if block_given?
         yield(queue[0].value)
-      else
-        values.push(queue[0].value)
       end
+      values.push(queue[0].value)
       queue.shift
     end
+    values
+  end
+
+  def inorder node=@root, values=[]
+    values = inorder(node.left, values) unless node.left.nil?
+    values.push(node.value)
+    values = inorder(node.right, values) unless node.right.nil?
+    values
+  end
+  def preorder node=@root, values=[]
+    values.push(node.value)
+    values = inorder(node.left, values) unless node.left.nil?
+    values = inorder(node.right, values) unless node.right.nil?
+    values
+  end
+  def postorder node=@root, values=[]
+    values = inorder(node.left, values) unless node.left.nil?
+    values = inorder(node.right, values) unless node.right.nil?
+    values.push(node.value)
     values
   end
 
@@ -210,4 +228,4 @@ end
 
 example_array = [3, 5, 4, 70, 100, 2, 0, 1]
 example_tree = Tree.new(example_array)
-puts "#{example_tree.level_order}"
+puts "#{example_tree.postorder}"
