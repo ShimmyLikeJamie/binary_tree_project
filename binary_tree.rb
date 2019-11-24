@@ -126,29 +126,9 @@ class Tree
     values
   end
 
-  def depth node, levels=0
-    left_tree_depth = depth(node.left, levels + 1) unless node.left.nil?
-    right_tree_depth = depth(node.right, levels + 1) unless node.right.nil?
-    if left_tree_depth.nil? && right_tree_depth.nil?
-    elsif right_tree_depth.nil? && !left_tree_depth.nil?
-      levels = left_tree_depth
-    elsif left_tree_depth.nil? && !right_tree_depth.nil?
-      levels = right_tree_depth
-    elsif left_tree_depth > right_tree_depth
-      levels = left_tree_depth
-    else
-      levels = right_tree_depth
-    end
-    levels
-  end
-
-  def balanced?
-    depth, balanced = balance_check(@root)
-    balanced ? true : false
-  end
-  def balance_check node, levels = 0, balanced = true
-    left_tree_depth, balanced = balance_check(node.left, levels + 1, balanced) unless node.left.nil?
-    right_tree_depth, balanced = balance_check(node.right, levels + 1, balanced) unless node.right.nil?
+  def depth_algorithm node, levels = 0, balanced = true
+    left_tree_depth, balanced = depth_algorithm(node.left, levels + 1, balanced) unless node.left.nil?
+    right_tree_depth, balanced = depth_algorithm(node.right, levels + 1, balanced) unless node.right.nil?
     if left_tree_depth.nil? && right_tree_depth.nil?
     elsif right_tree_depth.nil? && !left_tree_depth.nil?
       levels = left_tree_depth
@@ -166,6 +146,16 @@ class Tree
       end
     end
     return levels, balanced
+  end
+
+  def depth node
+    levels, balanced = depth_algorithm(node)
+    levels
+  end
+
+  def balanced?
+    depth, balanced = depth_algorithm(@root)
+    balanced ? true : false
   end
 
   def find value
