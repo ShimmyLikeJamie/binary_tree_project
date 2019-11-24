@@ -126,6 +126,22 @@ class Tree
     values
   end
 
+  def depth node, levels=0
+    left_tree_depth = depth(node.left, levels + 1) unless node.left.nil?
+    right_tree_depth = depth(node.right, levels + 1) unless node.right.nil?
+    if left_tree_depth.nil? && right_tree_depth.nil?
+    elsif right_tree_depth.nil? && !left_tree_depth.nil?
+      levels = left_tree_depth
+    elsif left_tree_depth.nil? && !right_tree_depth.nil?
+      levels = right_tree_depth
+    elsif left_tree_depth > right_tree_depth
+      levels = left_tree_depth
+    else
+      levels = right_tree_depth
+    end
+    levels
+  end
+
   def find value
     result = find_recursion(value)
     if result.nil?
@@ -228,4 +244,4 @@ end
 
 example_array = [3, 5, 4, 70, 100, 2, 0, 1]
 example_tree = Tree.new(example_array)
-puts "#{example_tree.postorder}"
+puts "#{example_tree.depth(example_tree.root)}" #I use root here but you can use any node in the tree
