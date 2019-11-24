@@ -283,7 +283,7 @@ def build_tree(arr)
             current_node = current_node.left
           end
         elsif data == current_node.value
-          next
+          break
         else
           if current_node.right.nil?
             current_node.right = Node.new(data)
@@ -298,12 +298,26 @@ def build_tree(arr)
   root
 end
 
-example_array = [3, 5, 4, 70, 100, 2, 0, -1]
+print "Creating new array... "
+example_array = Array.new(15) { rand(1..100)}
+puts "Done"
+print "Creating new tree... "
 example_tree = Tree.new(example_array)
-puts "Initial level order array: #{example_tree.level_order}"
-example_tree.insert(150)
-puts "After inserting 150: #{example_tree.level_order}"
-puts "Tree is balanced: #{example_tree.balanced?}"
-puts "Balancing tree..."
+puts "Done"
+puts "Is tree balanced?: #{example_tree.balanced?}"
+puts "Inorder: #{example_tree.inorder}"
+puts "Preorder: #{example_tree.preorder}"
+puts "Postorder: #{example_tree.postorder}"
+print "Unbalancing... "
+example_array.push(100, 200, 300)
+puts "Done"
+puts "Is tree balanced?: #{example_tree.balanced?}"
+print "Rebalancing... "
 example_tree.rebalance!
-puts "Level order again: #{example_tree.level_order}"
+puts "Done"
+puts "Is tree balanced?: #{example_tree.balanced?}"
+puts "Printing all elements..."
+puts "Inorder: #{example_tree.inorder}"
+puts "Preorder: #{example_tree.preorder}"
+puts "Postorder: #{example_tree.postorder}"
+puts "Level order: #{example_tree.level_order}"
