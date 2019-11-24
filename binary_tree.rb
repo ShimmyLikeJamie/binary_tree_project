@@ -126,36 +126,58 @@ class Tree
     values
   end
 
-  def depth_algorithm node, levels = 0, balanced = true
-    left_tree_depth, balanced = depth_algorithm(node.left, levels + 1, balanced) unless node.left.nil?
-    right_tree_depth, balanced = depth_algorithm(node.right, levels + 1, balanced) unless node.right.nil?
+  def depth_algorithm rebalance = false, node=@root, parent=@root, levels = 0, balanced = true
+    left_tree_depth, balanced = depth_algorithm(rebalance, node.left, node, levels + 1, balanced) unless node.left.nil?
+    right_tree_depth, balanced = depth_algorithm(rebalance, node.right, node, levels + 1, balanced) unless node.right.nil?
     if left_tree_depth.nil? && right_tree_depth.nil?
     elsif right_tree_depth.nil? && !left_tree_depth.nil?
+      current_level = levels
       levels = left_tree_depth
+      if left_tree_depth - current_level > 1 && rebalance
+        rebalance_left(node, parent)
+        levels -= 1
+      end
     elsif left_tree_depth.nil? && !right_tree_depth.nil?
+      current_level = levels
       levels = right_tree_depth
+      if right_tree_depth - current_level > 1 && rebalance
+        rebalance_right(node, parent)
+        levels -= 1
+      end
     elsif left_tree_depth > right_tree_depth
       levels = left_tree_depth
-      if left_tree_depth - right_tree_depth > 1 || left_tree_depth - right_tree_depth < -1
+      if left_tree_depth - right_tree_depth > 1
         balanced = false
+        if rebalance
+          rebalance_left(node, parent)
+          levels -= 1
+        end
       end
     else
       levels = right_tree_depth
-      if right_tree_depth - left_tree_depth > 1 || right_tree_depth - left_tree_depth < -1
+      if right_tree_depth - left_tree_depth > 1
         balanced = false
+        if rebalance
+          rebalance_right(node, parent)
+          levels -= 1
+        end
       end
     end
     return levels, balanced
   end
 
   def depth node
-    levels, balanced = depth_algorithm(node)
+    levels, balanced = depth_algorithm(false, node)
     levels
   end
 
   def balanced?
-    depth, balanced = depth_algorithm(@root)
+    depth, balanced = depth_algorithm(false)
     balanced ? true : false
+  end
+
+  def rebalance!
+    depth_algorithm(true)
   end
 
   def find value
@@ -178,6 +200,25 @@ class Tree
     end
     return result
   end
+end
+
+def rebalance_left node, parent
+  node.left.right = node
+  if parent.left == node
+    parent.left = node.left
+  else
+    parent.right = node.left
+  end
+  node.left = nil
+end
+def rebalance_right node, parent
+  node.right.left = node
+  if parent.left == node
+    parent.left = node.right
+  else
+    parent.right = node.right
+  end
+  node.right = nil
 end
 
 def find_successor node, value=nil, result=MAX
@@ -257,7 +298,12 @@ def build_tree(arr)
   root
 end
 
-example_array = [3, 5, 4, 70, 100, 2, 0, 1]
+example_array = [3, 5, 4, 70, 100, 2, 0, -1]
 example_tree = Tree.new(example_array)
+puts "Initial level order array: #{example_tree.level_order}"
 example_tree.insert(150)
-puts "#{example_tree.balanced?}"
+puts "After inserting 150: #{example_tree.level_order}"
+puts "Tree is balanced: #{example_tree.balanced?}"
+puts "Balancing tree..."
+example_tree.rebalance!
+puts "Level order again: #{example_tree.level_order}"
