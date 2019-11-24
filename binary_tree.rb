@@ -142,6 +142,32 @@ class Tree
     levels
   end
 
+  def balanced?
+    depth, balanced = balance_check(@root)
+    balanced ? true : false
+  end
+  def balance_check node, levels = 0, balanced = true
+    left_tree_depth, balanced = balance_check(node.left, levels + 1, balanced) unless node.left.nil?
+    right_tree_depth, balanced = balance_check(node.right, levels + 1, balanced) unless node.right.nil?
+    if left_tree_depth.nil? && right_tree_depth.nil?
+    elsif right_tree_depth.nil? && !left_tree_depth.nil?
+      levels = left_tree_depth
+    elsif left_tree_depth.nil? && !right_tree_depth.nil?
+      levels = right_tree_depth
+    elsif left_tree_depth > right_tree_depth
+      levels = left_tree_depth
+      if left_tree_depth - right_tree_depth > 1 || left_tree_depth - right_tree_depth < -1
+        balanced = false
+      end
+    else
+      levels = right_tree_depth
+      if right_tree_depth - left_tree_depth > 1 || right_tree_depth - left_tree_depth < -1
+        balanced = false
+      end
+    end
+    return levels, balanced
+  end
+
   def find value
     result = find_recursion(value)
     if result.nil?
@@ -150,7 +176,6 @@ class Tree
       result
     end
   end
-
   def find_recursion value, node=@root, result=nil
     if !node.left.nil?
       result = find_recursion value, node.left
@@ -244,4 +269,5 @@ end
 
 example_array = [3, 5, 4, 70, 100, 2, 0, 1]
 example_tree = Tree.new(example_array)
-puts "#{example_tree.depth(example_tree.root)}" #I use root here but you can use any node in the tree
+example_tree.insert(150)
+puts "#{example_tree.balanced?}"
